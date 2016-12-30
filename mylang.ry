@@ -1,27 +1,30 @@
 class MyParser
 rule
-  statement : number_list '.'
-            | number '+' number          { result = val[0] + val[2]}
-            | number '-' number          { result = val[0] - val[2]}
-            | number '*' number          { result = val[0] * val[2]}
-            | number '/' number          { result = val[0] / val[2]}
-            | string '.'
+  statement   : number_list '.'
+              | string '.'
+              | formula '.'
 
-   string   : MADOHOMU               { result = "ほむらちゃん大好き!!" }
-            | HOMUMADO               { result = "まどか、愛してるわ" }
-            | CONNECT                { result = "かわした約束　忘れないよ　目を閉じ確かめる　おしよせた闇　振り払って　すすむよ いつになったらなくした未来を　私ここでまた見ることできるの　溢れ出した不安の影を　何度でもさいて　この世界あゆんでこう　とめどなく刻まれた　ときは今始まり告げ　変わらない思いをのせ　閉ざされた扉あけよう　目覚めた心は走り出して未来を描くため　難しい道でたちどまっても空は　きれいな青さでいつもまっててくれる　だから怖くない　もう何があってもくじけない" }
-            | SAYAKYO                { result = "杏子、大好きだよ！" }
-            | KYOSAYA                { result = "さやか、大好きだぞ！" }
-            | MAMINAGI               { result = "好きよ、なぎさ" }
-            | NAGIMAMI               { result = "マミ！大好きなのです！！" }
+  formula     : number '+' number          { result = val[0] + val[2]}
+              | number '-' number          { result = val[0] - val[2]}
+              | number '*' number          { result = val[0] * val[2]}
+              | number '/' number          { result = val[0] / val[2]}
 
-  number_list : number                   { result = [val[0]]    }
-              | number_list ',' number   { result << val[2]     }
+   string     : MADOHOMU                   { result = "ほむらちゃん大好き!!" }
+              | HOMUMADO                   { result = "まどか、愛してるわ" }
+              | CONNECT                    { result = "かわした約束　忘れないよ　目を閉じ確かめる　おしよせた闇　振り払って　すすむよ いつになったらなくした未来を　私ここでまた見ることできるの　溢れ出した不安の影を　何度でもさいて　この世界あゆんでこう　とめどなく刻まれた　ときは今始まり告げ　変わらない思いをのせ　閉ざされた扉あけよう　目覚めた心は走り出して未来を描くため　難しい道でたちどまっても空は　きれいな青さでいつもまっててくれる　だから怖くない　もう何があってもくじけない" }
+              | SAYAKYO                    { result = "杏子、大好きだよ！" }
+              | KYOSAYA                    { result = "さやか、大好きだぞ！" }
+              | MAMINAGI                   { result = "好きよ、なぎさ" }
+              | NAGIMAMI                   { result = "マミ！大好きなのです！！" }
+              | MADOMAGI                   { result = "魔法少女まどかマギカ" }
+              | QB                         { result = "僕と契約して魔法少女になってよ！！" }
+              | STRING
 
+  number_list : number                     { result = [val[0]] }
+              | number_list ',' number     { result << val[2]  }
 
-
-  number    : DEC                        { result = val[0].to_i }
-            | HEX                        { result = val[0].to_i }
+  number      : DEC                        { result = val[0].to_i }
+              | HEX                        { result = val[0].to_i }
 end
 
 ---- header
@@ -40,13 +43,15 @@ def parse(str)
         s.scan(/0x\d+/)     ? @q << [:HEX,      s.matched] :
         s.scan(/\d+/)       ? @q << [:DEC,      s.matched] :
         s.scan(/[a-z]+/)    ? @q << [:STRING,      s.matched] :
-        s.scan(/まどほむ/)   ? @q << [:MADOHOMU,      s.matched] :
-        s.scan(/ほむまど/)   ? @q << [:HOMUMADO,      s.matched] :
-        s.scan(/コネクト/)   ? @q << [:CONNECT,      s.matched] :
-        s.scan(/さやきょう/)   ? @q << [:SAYAKYO,      s.matched] :
-        s.scan(/きょうさや/)   ? @q << [:KYOSAYA,      s.matched] :
+        s.scan(/まどほむ/)    ? @q << [:MADOHOMU,      s.matched] :
+        s.scan(/ほむまど/)    ? @q << [:HOMUMADO,      s.matched] :
+        s.scan(/コネクト/)    ? @q << [:CONNECT,      s.matched] :
+        s.scan(/さやきょう/)  ? @q << [:SAYAKYO,      s.matched] :
+        s.scan(/きょうさや/)  ? @q << [:KYOSAYA,      s.matched] :
         s.scan(/まみなぎ/)   ? @q << [:MAMINAGI,      s.matched] :
         s.scan(/なぎまみ/)   ? @q << [:NAGIMAMI,      s.matched] :
+        s.scan(/まどまぎ/)   ? @q << [:MADOMAGI,      s.matched] :
+        s.scan(/QB/)        ? @q << [:QB,      s.matched] :
         s.scan(/./)         ? @q << [s.matched, s.matched] :
                           (raise "scanner error")
     end
