@@ -1,11 +1,13 @@
 class MyParser
 rule
   statement : number_list '.'
-            | number '+' number          { result = val[0] + val[2]}
+            | string '.'
+            | formula '.'
+
+  formula   : number '+' number          { result = val[0] + val[2]}
             | number '-' number          { result = val[0] - val[2]}
             | number '*' number          { result = val[0] * val[2]}
             | number '/' number          { result = val[0] / val[2]}
-            | string '.'
 
    string   : MADOHOMU               { result = "ほむらちゃん大好き!!" }
             | HOMUMADO               { result = "まどか、愛してるわ" }
